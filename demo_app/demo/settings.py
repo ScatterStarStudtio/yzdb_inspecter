@@ -14,6 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 PROJECT_ROOT = os.path.join(
     os.path.realpath(os.path.dirname(__file__)), os.pardir)
 # PROJECT_ROOT  = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 DEBUG = True
 
@@ -33,6 +34,41 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db2.sqlite3'),
+    },
+    # 'yinzhuo': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'OPTIONS': {
+    #         'read_default_file': os.path.join(BASE_DIR, 'yzedu/mysql.cnf')
+    #     },
+    # },
+    'django_admin': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+    'yinzhuo': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'yinzhuo',
+        'USER': 'root',
+        'PASSWORD': '43u8i@wer87#@1',
+        'HOST': 'rm-wz9d614f8h2is9y8o0o.mysql.rds.aliyuncs.com',
+        'PORT': '3306',
+        'DATABASE': 'yinzhuo'
+    }
+}
+
+DATABASE_ROUTERS = ['demo.db_router.admin_router.AdminRouter',
+                  'demo.db_router.auth_router.AuthRouter',
+                  'demo.db_router.contenttypes_router.ContenttypesRouter',
+                  'demo.db_router.inspectdb_router.InspectdbRouter',
+                  'demo.db_router.sessions_router.SessionsRouter',
+                    'demo.db_router.revision_router.RevisionRouter',
+                    'demo.db_router.xadmin_router.XAdminRouter']
+
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ['*']
@@ -155,7 +191,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'reversion',
 
-    'app',
+    'yzdbmgmt'
 )
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'

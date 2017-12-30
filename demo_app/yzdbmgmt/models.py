@@ -1108,7 +1108,7 @@ class TTestquestions(models.Model):
         for pro in TTestproblem.objects.filter(testid__exact = self.id):
             pro_infos += str(pro.id) + ': ' + pro.qutype + ', '
 
-        return str(self.id) + ': ' + self.subjectname + '->' + self.titletype + '; 小问: ' + pro_infos
+        return str(self.id) + ': ' + '(' + self.faculty + ')' + self.subjectname + '->' + self.titletype + '; 小问: ' + pro_infos
 
     class Meta:
         managed = False
@@ -1222,7 +1222,7 @@ class TUserscore(models.Model):
 
     titletype_choices = set([(ut.titletype, ut.titletype) for ut in TUsertest.objects.all()])
 
-    scorejson_template = '''[{"Pros":[],"Score":xxx,"TestId":xxx},{"Pros":[{"ProId":xxx,"Score":xxx},{"ProId":xxx,"Score":xxx}],"Score":xxx,"TestId":xxx]'''
+    scorejson_template = '''[{"Pros":[],"Score":xxx,"TestId":xxx},{"Pros":[{"ProId":xxx,"Score":xxx},{"ProId":xxx,"Score":xxx}],"Score":xxx,"TestId":xxx}]'''
 
     id = models.CharField(db_column='Id', primary_key=True, max_length=100, default=getGUUID)  # Field name made lowercase.
     #attributeid = models.IntegerField(db_column='AttributeId', blank=True, null=True)  #

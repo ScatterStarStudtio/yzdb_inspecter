@@ -1198,7 +1198,7 @@ class TUsertest(models.Model):
         (0, '废弃字段'),
     )
 
-    id = models.CharField(db_column='Id', primary_key=True, max_length=100, default=getGUUID())  # Field name made lowercase.
+    id = models.CharField(db_column='Id', primary_key=True, max_length=100, default=getGUUID)  # Field name made lowercase.
     #attributeid = models.IntegerField(db_column='AttributeId', blank=True, null=True)  # Field name made lowercase.
     attributeid = models.ForeignKey(TUserpaperattribute, db_column='AttributeId')
     schoolid = models.IntegerField(db_column='SchoolId', blank=True, null=True, choices=school_ids)  # Field name made lowercase.
@@ -1224,7 +1224,7 @@ class TUserscore(models.Model):
 
     scorejson_template = '''[{"Pros":[],"Score":xxx,"TestId":xxx},{"Pros":[{"ProId":xxx,"Score":xxx},{"ProId":xxx,"Score":xxx}],"Score":xxx,"TestId":xxx]'''
 
-    id = models.CharField(db_column='Id', primary_key=True, max_length=100, default=getGUUID())  # Field name made lowercase.
+    id = models.CharField(db_column='Id', primary_key=True, max_length=100, default=getGUUID)  # Field name made lowercase.
     #attributeid = models.IntegerField(db_column='AttributeId', blank=True, null=True)  #
     attributeid = models.ForeignKey(TUserpaperattribute, db_column='AttributeId')
     schoolid = models.IntegerField(db_column='SchoolId', blank=True, null=True, choices=school_ids)  # Field name made lowercase.

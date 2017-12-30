@@ -1,8 +1,6 @@
 import xadmin
 import inspect, sys
 
-from .models import TSchool, TClass, TTeacher, TStudent, TUserpaperattribute, TUserscore, TExaminfo, TExamcard, TTestquestions, \
-    TTestproblem
 from re import split
 
 def get_columns(cls):
@@ -10,12 +8,9 @@ def get_columns(cls):
     columns_raw = split('([a-zA-Z_0-9]+)(?:,|\))', columns_raw)
     return tuple(columns_raw[1::2])
 
-operation_clses = [m[1] for m in inspect.getmembers(sys.modules["yzdbmgmt.models"], inspect.isclass) if m[0].startswith('T')]
-
-# operation_clses = [
-#     TSchool, TClass, TTeacher, TStudent, TUserpaperattribute, TUserscore, TExaminfo, TExamcard, TTestquestions,
-#     TTestproblem
-# ]
+operation_clses = [m[1] for m in inspect.getmembers(sys.modules["yzdbmgmt.models"], inspect.isclass)
+                   if (hasattr(m[1], '_meta') and hasattr(m[1]._meta, 'verbose_name_plural')
+                       and m[1]._meta.verbose_name_plural[0] > u'\u4e000')]
 
 for cls in operation_clses:
     xadmin.site.register(

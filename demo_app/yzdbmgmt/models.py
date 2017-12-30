@@ -524,7 +524,7 @@ class TUserpaperattribute(models.Model):
     sharingcode = models.CharField(db_column='SharingCode', max_length=100, blank=True, null=True)  # Field name made lowercase.
 
     def __str__(self):
-        return self.title
+        return self.title + ': ' + str(self.id)
 
     class Meta:
         managed = False
@@ -1104,7 +1104,11 @@ class TTestquestions(models.Model):
     versionid = models.IntegerField(db_column='VersionId', blank=True, null=True)  # Field name made lowercase.
 
     def __str__(self):
-        return str(self.id) + ': ' + self.subjectname + '->' + self.titletype
+        pro_infos = ''
+        for pro in TTestproblem.objects.filter(testid__exact = self.id):
+            pro_infos += str(pro.id) + ': ' + pro.qutype + ', '
+
+        return str(self.id) + ': ' + self.subjectname + '->' + self.titletype + '; 小问: ' + pro_infos
 
     class Meta:
         managed = False
@@ -1189,22 +1193,53 @@ class TUserrole(models.Model):
         managed = False
         db_table = 't_userrole'
 
+class TUsertest(models.Model):
+    testversionid_choices = (
+        (0, '废弃字段'),
+    )
+
+    id = models.CharField(db_column='Id', primary_key=True, max_length=100, default=getGUUID())  # Field name made lowercase.
+    #attributeid = models.IntegerField(db_column='AttributeId', blank=True, null=True)  # Field name made lowercase.
+    attributeid = models.ForeignKey(TUserpaperattribute, db_column='AttributeId')
+    schoolid = models.IntegerField(db_column='SchoolId', blank=True, null=True, choices=school_ids)  # Field name made lowercase.
+    #testid = models.IntegerField(db_column='TestId', blank=True, null=True)  # Field name made lowercase.
+    testid = models.ForeignKey(TTestquestions, db_column='TestId')
+    titletype = models.CharField(db_column='TitleType', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime())  # Field name made lowercase.
+    createuser = models.CharField(db_column='CreateUser', max_length=50, blank=True, null=True, choices=front_end_users)  # Field name made lowercase.
+    testversionid = models.IntegerField(db_column='TestVersionId', default=0, choices=testversionid_choices)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 't_usertest'
+        verbose_name_plural = '试卷内试题信息'
 
 class TUserscore(models.Model):
-    id = models.CharField(db_column='Id', primary_key=True, max_length=100)  # Field name made lowercase.
-    attributeid = models.IntegerField(db_column='AttributeId', blank=True, null=True)  # Field name made lowercase.
-    schoolid = models.IntegerField(db_column='SchoolId', blank=True, null=True)  # Field name made lowercase.
-    titletype = models.CharField(db_column='TitleType', max_length=50, blank=True, null=True)  # Field name made lowercase.
-    scorejson = models.TextField(db_column='ScoreJson', blank=True, null=True)  # Field name made lowercase.
-    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True)  # Field name made lowercase.
-    createuser = models.CharField(db_column='CreateUser', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    isequal_choices = (
+        (0, '相同题型小题分值不同'),
+        (1, '相同题型小题分值相同')
+    )
+
+    titletype_choices = set([(ut.titletype, str(ut.attributeid) + '>' + ut.titletype) for ut in TUsertest.objects.all()])
+
+    scorejson_template = '''[{"Pros":[],"Score":xxx,"TestId":xxx},{"Pros":[{"ProId":xxx,"Score":xxx},{"ProId":xxx,"Score":xxx}],"Score":xxx,"TestId":xxx]'''
+
+    id = models.CharField(db_column='Id', primary_key=True, max_length=100, default=getGUUID())  # Field name made lowercase.
+    #attributeid = models.IntegerField(db_column='AttributeId', blank=True, null=True)  #
+    attributeid = models.ForeignKey(TUserpaperattribute, db_column='AttributeId')
+    schoolid = models.IntegerField(db_column='SchoolId', blank=True, null=True, choices=school_ids)  # Field name made lowercase.
+    titletype = models.CharField(db_column='TitleType', max_length=50, blank=True, null=True, choices=titletype_choices)  # Field name made lowercase.
+    scorejson = models.TextField(db_column='ScoreJson', blank=True, null=True, default=scorejson_template)  # Field name made lowercase.
+    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime())  # Field name made lowercase.
+    createuser = models.CharField(db_column='CreateUser', max_length=50, blank=True, null=True, choices=front_end_users)  # Field name made lowercase.
     sort = models.IntegerField(db_column='Sort', blank=True, null=True)  # Field name made lowercase.
-    isequal = models.IntegerField(db_column='IsEqual', blank=True, null=True)  # Field name made lowercase.
+    isequal = models.IntegerField(db_column='IsEqual', blank=True, null=True, default=1, choices=isequal_choices)  # Field name made lowercase.
     alias = models.CharField(db_column='Alias', max_length=500, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 't_userscore'
+        verbose_name_plural = '试卷的试题结构'
 
 
 class TUserscorecart(models.Model):
@@ -1266,28 +1301,6 @@ class TUserstudenttest(models.Model):
     class Meta:
         managed = False
         db_table = 't_userstudenttest'
-
-
-class TUsertest(models.Model):
-    testversionid_choices = (
-        (0, '废弃字段'),
-    )
-
-    id = models.CharField(db_column='Id', primary_key=True, max_length=100, default=getGUUID())  # Field name made lowercase.
-    #attributeid = models.IntegerField(db_column='AttributeId', blank=True, null=True)  # Field name made lowercase.
-    attributeid = models.ForeignKey(TUserpaperattribute, db_column='AttributeId')
-    schoolid = models.IntegerField(db_column='SchoolId', blank=True, null=True, choices=school_ids)  # Field name made lowercase.
-    #testid = models.IntegerField(db_column='TestId', blank=True, null=True)  # Field name made lowercase.
-    testid = models.ForeignKey(TTestquestions, db_column='TestId')
-    titletype = models.CharField(db_column='TitleType', max_length=50, blank=True, null=True)  # Field name made lowercase.
-    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime())  # Field name made lowercase.
-    createuser = models.CharField(db_column='CreateUser', max_length=50, blank=True, null=True, choices=front_end_users)  # Field name made lowercase.
-    testversionid = models.IntegerField(db_column='TestVersionId', default=0, choices=testversionid_choices)  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 't_usertest'
-        verbose_name_plural = '试卷内试题信息'
 
 
 class TUsertestcart(models.Model):

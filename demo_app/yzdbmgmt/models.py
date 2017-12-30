@@ -1220,7 +1220,7 @@ class TUserscore(models.Model):
         (1, '相同题型小题分值相同')
     )
 
-    titletype_choices = set([(ut.titletype, str(ut.attributeid) + '>' + ut.titletype) for ut in TUsertest.objects.all()])
+    titletype_choices = set([(ut.titletype, ut.titletype) for ut in TUsertest.objects.all()])
 
     scorejson_template = '''[{"Pros":[],"Score":xxx,"TestId":xxx},{"Pros":[{"ProId":xxx,"Score":xxx},{"ProId":xxx,"Score":xxx}],"Score":xxx,"TestId":xxx]'''
 
@@ -1390,8 +1390,11 @@ class TUserteststructure(models.Model):
     biggroup = models.IntegerField(db_column='BigGroup', blank=True, null=True)  # Field name made lowercase.
     bigindex = models.IntegerField(db_column='BigIndex')  # Field name made lowercase.
     bigalias = models.CharField(db_column='BigAlias', max_length=128, blank=True, null=True)  # Field name made lowercase.
-    questionid = models.ForeignKey(TTestquestions, db_column='QuestionId')
-    problemid = models.ForeignKey(TTestproblem, db_column='ProblemId')
+    questionid = models.IntegerField(db_column='QuestionId', blank=True, null=True)  # Field name made lowercase.
+    #questionid = models.ForeignKey(TTestquestions, db_column='QuestionId')
+    problemid = models.IntegerField(db_column='ProblemId')  # Field name made lowercase.
+    #problemid = models.ForeignKey(TTestproblem, db_column='ProblemId')
+    #attributeid = models.IntegerField(db_column='AttributeId', blank=True, null=True)
     attributeid = models.ForeignKey(TUserpaperattribute, db_column='AttributeId')
     issubjective = models.SmallIntegerField(db_column='IsSubjective', blank=True, null=True)  # Field name made lowercase.
     score = models.DecimalField(db_column='Score', max_digits=4, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
@@ -1401,6 +1404,7 @@ class TUserteststructure(models.Model):
     class Meta:
         managed = False
         db_table = 't_userteststructure'
+        verbose_name_plural = '答题卡试卷结构'
 
 
 class TUserteststudentscan(models.Model):
@@ -1417,6 +1421,7 @@ class TUserteststudentscan(models.Model):
     class Meta:
         managed = False
         db_table = 't_userteststudentscan'
+        verbose_name_plural = '答题卡扫描总揽'
 
 
 class TUserteststudentscanraw(models.Model):
@@ -1434,6 +1439,7 @@ class TUserteststudentscanraw(models.Model):
     class Meta:
         managed = False
         db_table = 't_userteststudentscanraw'
+        verbose_name_plural = '答题卡识别原始数据'
 
 
 class TbPictures(models.Model):

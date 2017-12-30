@@ -218,7 +218,7 @@ class TGradesubjects(models.Model):
     updateuser = models.CharField(db_column='UpdateUser', max_length=50, blank=True, null=True)  # Field name made lowercase.
 
     def __str__(self):
-        return self.namevalue
+        return self.faculty + self.namevalue
 
     class Meta:
         managed = False
@@ -571,7 +571,8 @@ class TExaminfo(models.Model):
         (1, '学校'),
         (4, '年级'),
         (8, '班级'),
-        (12,'人员')
+        (12,'人员'),
+        (99, '未分配')
     )
 
     isanswecard_choice = (
@@ -582,6 +583,13 @@ class TExaminfo(models.Model):
     isresults_choice = (
         (1, '否'),
         (2, '是')
+    )
+
+    judgestatus_choices = (
+        (0, '未设置'),
+        (1, '已设置'),
+        (2, '在修改'),
+        (3, '开始改卷，不能修改')
     )
 
     id = models.AutoField(db_column='Id', primary_key=True)  # Field name made lowercase.
@@ -599,15 +607,15 @@ class TExaminfo(models.Model):
     isanswecard = models.IntegerField(db_column='IsAnsweCard', blank=True, null=True, choices=isanswecard_choice)  # Field name made lowercase.
     totalscore = models.FloatField(db_column='TotalScore', blank=True, null=True)  # Field name made lowercase.
     isresults = models.IntegerField(db_column='IsResults', blank=True, null=True, choices=isresults_choice)  # Field name made lowercase.
-    judgestatus = models.IntegerField(db_column='JudgeStatus', blank=True, null=True)  # Field name made lowercase.
+    judgestatus = models.IntegerField(db_column='JudgeStatus', blank=True, null=True, choices=judgestatus_choices)  # Field name made lowercase.
     createuser = models.CharField(db_column='CreateUser', max_length=100, blank=True, null=True,
                                   choices=set([(user.platformnumber, user.platformnumber) for user in
                                                TFrontenduser.objects.all()])
                                   )  # Field name made lowercase.
     createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime())  # Field name made lowercase.
-    subjectids = models.CharField(db_column='SubjectIds', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    subjectids = models.CharField(db_column='SubjectIds', max_length=255, blank=True, null=True, choices=subject_ids)  # Field name made lowercase.
     faculty = models.CharField(db_column='Faculty', max_length=100, blank=True, null=True)  # Field name made lowercase.
-    gradename = models.CharField(db_column='GradeName', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    gradename = models.CharField(db_column='GradeName', max_length=255, blank=True, null=True, choices=grade_names)  # Field name made lowercase.
     #gradeid = models.CharField(db_column='GradeId', max_length=255, blank=True, null=True)  # Field name made lowercase.
     gradeid = models.ForeignKey(TGradesubjects, db_column='GradeId')
 
@@ -722,10 +730,14 @@ class TExamcard(models.Model):
         (2, '停用禁答区')
     )
 
+    testpaperversion_choices = (
+        (0, '废弃字段'),
+    )
+
     id = models.AutoField(db_column='Id', primary_key=True)  # Field name made lowercase.
     examid = models.ForeignKey(TExaminfo, db_column='ExamId')
     testpaperid = models.ForeignKey(TUserpaperattribute, db_column='TestPaperId')
-    testpaperversion = models.IntegerField(db_column='TestPaperVersion', blank=True, null=True)  # Field name made lowercase.
+    testpaperversion = models.IntegerField(db_column='TestPaperVersion', blank=True, null=True, default=0, choices=testpaperversion_choices)  # Field name made lowercase.
     papersize = models.CharField(db_column='PaperSize', max_length=100, blank=True, null=True, choices=papersize_choice, default=0)  # Field name made lowercase.
     layouttype = models.IntegerField(db_column='LayoutType', blank=True, null=True, choices=layouttype_choice)  # Field name made lowercase.
     versiontype = models.IntegerField(db_column='VersionType', blank=True, null=True, choices=versiontype_choice)  # Field name made lowercase.
@@ -1390,15 +1402,15 @@ class TUserteststructure(models.Model):
     biggroup = models.IntegerField(db_column='BigGroup', blank=True, null=True)  # Field name made lowercase.
     bigindex = models.IntegerField(db_column='BigIndex')  # Field name made lowercase.
     bigalias = models.CharField(db_column='BigAlias', max_length=128, blank=True, null=True)  # Field name made lowercase.
-    questionid = models.IntegerField(db_column='QuestionId', blank=True, null=True)  # Field name made lowercase.
-    #questionid = models.ForeignKey(TTestquestions, db_column='QuestionId')
-    problemid = models.IntegerField(db_column='ProblemId')  # Field name made lowercase.
-    #problemid = models.ForeignKey(TTestproblem, db_column='ProblemId')
+    #questionid = models.IntegerField(db_column='QuestionId', blank=True, null=True)  # Field name made lowercase.
+    questionid = models.ForeignKey(TTestquestions, db_column='QuestionId')
+    #problemid = models.IntegerField(db_column='ProblemId')  # Field name made lowercase.
+    problemid = models.ForeignKey(TTestproblem, db_column='ProblemId')
     #attributeid = models.IntegerField(db_column='AttributeId', blank=True, null=True)
     attributeid = models.ForeignKey(TUserpaperattribute, db_column='AttributeId')
     issubjective = models.SmallIntegerField(db_column='IsSubjective', blank=True, null=True)  # Field name made lowercase.
     score = models.DecimalField(db_column='Score', max_digits=4, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
-    inposition = models.IntegerField(db_column='InPosition', blank=True, null=True)  # Field name made lowercase.
+    inposition = models.CharField(db_column='InPosition', max_length=64, blank=True, null=True)  # Field name made lowercase.
     indetail = models.CharField(db_column='InDetail', max_length=64, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:

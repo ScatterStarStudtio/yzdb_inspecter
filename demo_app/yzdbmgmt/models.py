@@ -15,7 +15,7 @@ from django.utils.translation import gettext as _
 
 from multiselectfield import MultiSelectField
 
-from utils.common import getYzDefaultFmtDateTime, getGUUID
+from utils.common import getYzDefaultFmtDateTime, getGUUID, gennerate_idcard, create_phone, get_random_name
 
 class SysAppUser(models.Model):
     user_id = models.CharField(db_column='USER_ID', primary_key=True, max_length=100)  # Field name made lowercase.
@@ -279,7 +279,7 @@ class TSchool(models.Model):
     domain = models.CharField(db_column='Domain', max_length=255, blank=True, null=True)  # Field name made lowercase.
     introduction = models.CharField(db_column='Introduction', max_length=2000, blank=True, null=True)  # Field name made lowercase.
     isstate = models.IntegerField(db_column='Isstate', blank=True, null=True)  # Field name made lowercase.
-    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime())  # Field name made lowercase.
+    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime)  # Field name made lowercase.
     createuser = models.CharField(db_column='CreateUser', max_length=50, blank=True, null=True)  # Field name made lowercase.
     adminuser = models.CharField(db_column='AdminUser', max_length=255, blank=True, null=True)  # Field name made lowercase.
     adminphone = models.CharField(db_column='AdminPhone', max_length=255, blank=True, null=True)  # Field name made lowercase.
@@ -310,7 +310,7 @@ class TTeacher(models.Model):
     nature = models.IntegerField(db_column='Nature', blank=True, null=True)  # Field name made lowercase.
     working = models.IntegerField(db_column='Working', blank=True, null=True)  # Field name made lowercase.
     isstate = models.IntegerField(db_column='Isstate', blank=True, null=True)  # Field name made lowercase.
-    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime())  # Field name made lowercase.
+    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime)  # Field name made lowercase.
     createuser = models.CharField(db_column='CreateUser', max_length=50, blank=True, null=True, choices=front_end_users)  # Field name made lowercase.
     updatedate = models.CharField(db_column='UpdateDate', max_length=32, blank=True, null=True)  # Field name made lowercase.
     updateuser = models.CharField(db_column='UpdateUser', max_length=50, blank=True, null=True)  # Field name made lowercase.
@@ -358,7 +358,7 @@ class TClass(models.Model):
     teachernum = models.IntegerField(db_column='TeacherNum', blank=True, null=True)  # Field name made lowercase.
     enteryear = models.CharField(db_column='EnterYear', max_length=4, blank=True, null=True)  # Field name made lowercase.
     endenteryear = models.CharField(db_column='EndEnterYear', max_length=4, blank=True, null=True)  # Field name made lowercase.
-    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime())  # Field name made lowercase.
+    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime)  # Field name made lowercase.
     createuser = models.CharField(db_column='CreateUser', max_length=50, blank=True, null=True, choices=front_end_users)  # Field name made lowercase.
     updatedate = models.CharField(db_column='UpdateDate', max_length=32, blank=True, null=True)  # Field name made lowercase.
     updateuser = models.CharField(db_column='UpdateUser', max_length=50, blank=True, null=True)  # Field name made lowercase.
@@ -390,18 +390,18 @@ class TStudent(models.Model):
     }
 
     id = models.AutoField(db_column='Id', primary_key=True)  # Field name made lowercase.
-    schoolid = models.IntegerField(db_column='SchoolId')  # Field name made lowercase.
+    schoolid = models.IntegerField(db_column='SchoolId', choices=school_ids, default=76)  # Field name made lowercase.
     #schoolid = models.ForeignKey(TSchool, db_column='SchoolId')
     platformid = models.CharField(db_column='PlatformId', max_length=100, blank=True, null=True)  # Field name made lowercase.
-    user_name = models.CharField(db_column='User_Name', max_length=100, blank=True, null=True)  # Field name made lowercase.
-    sex = models.IntegerField(db_column='Sex', blank=True, null=True, choices=genders)  # Field name made lowercase.
-    age = models.IntegerField(db_column='Age', blank=True, null=True)  # Field name made lowercase.
-    studentnumber = models.CharField(db_column='StudentNumber', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    phone = models.CharField(db_column='Phone', max_length=11, blank=True, null=True)  # Field name made lowercase.
-    idcard = models.CharField(db_column='IdCard', max_length=18)  # Field name made lowercase.
-    isstate = models.IntegerField(db_column='Isstate', blank=True, null=True, choices=validators)  # Field name made lowercase.
-    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime())  # Field name made lowercase.
-    createuser = models.CharField(db_column='CreateUser', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    user_name = models.CharField(db_column='User_Name', max_length=100, blank=True, null=True, default=get_random_name)  # Field name made lowercase.
+    sex = models.IntegerField(db_column='Sex', blank=True, null=True, choices=genders, default=0)  # Field name made lowercase.
+    age = models.IntegerField(db_column='Age', blank=True, null=True, default=15)  # Field name made lowercase.
+    studentnumber = models.CharField(db_column='StudentNumber', max_length=255, blank=True, null=True, default=create_phone)  # Field name made lowercase.
+    phone = models.CharField(db_column='Phone', max_length=11, blank=True, null=True, default=create_phone)  # Field name made lowercase.
+    idcard = models.CharField(db_column='IdCard', max_length=18, default=gennerate_idcard)  # Field name made lowercase.
+    isstate = models.IntegerField(db_column='Isstate', blank=True, null=True, choices=validators, default=1)  # Field name made lowercase.
+    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime)  # Field name made lowercase.
+    createuser = models.CharField(db_column='CreateUser', max_length=50, blank=True, null=True, choices=front_end_users, default='hz2hs@163.com')  # Field name made lowercase.
     updatedate = models.CharField(db_column='UpdateDate', max_length=32, blank=True, null=True)  # Field name made lowercase.
     updateuser = models.CharField(db_column='UpdateUser', max_length=50, blank=True, null=True)  # Field name made lowercase.
 
@@ -507,7 +507,7 @@ class TUserpaperattribute(models.Model):
     attributetype = models.CharField(db_column='AttributeType', max_length=100, blank=True, null=True, choices=attributetype_choices)  # Field name made lowercase.
     problemmaker = models.CharField(db_column='ProblemMaker', max_length=255, blank=True, null=True)  # Field name made lowercase.
     isstate = models.IntegerField(db_column='Isstate', blank=True, null=True, default=1, choices=isstate_choices)  # Field name made lowercase.
-    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime())  # Field name made lowercase.
+    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime)  # Field name made lowercase.
     createuser = models.CharField(db_column='CreateUser', max_length=50, blank=True, null=True, choices=front_end_users)  # Field name made lowercase.
     subjectname = models.CharField(db_column='SubjectName', max_length=255, blank=True, null=True, choices=subject_names)  # Field name made lowercase.
     gradename = models.CharField(db_column='GradeName', max_length=255, blank=True, null=True, choices=grade_names)  # Field name made lowercase.
@@ -544,7 +544,7 @@ class TExamtype(models.Model):
     memo = models.CharField(db_column='Memo', max_length=100, blank=True, null=True)  # Field name made lowercase.
     isstate = models.IntegerField(db_column='Isstate', blank=True, null=True, choices=isstate_choice)  # Field name made lowercase.
     createuser = models.CharField(db_column='CreateUser', max_length=100, blank=True, null=True, choices=front_end_users)  # Field name made lowercase.
-    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime())  # Field name made lowercase.
+    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime)  # Field name made lowercase.
 
     def __str__(self):
         return self.typename
@@ -598,8 +598,8 @@ class TExaminfo(models.Model):
     examname = models.CharField(db_column='examName', max_length=200, blank=True, null=True)  # Field name made lowercase.
     examtype = models.CharField(db_column='examType', max_length=100, blank=True, null=True)  # Field name made lowercase.
     examtypeid = models.ForeignKey(TExamtype, db_column='examTypeId')
-    begindate = models.CharField(db_column='BeginDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime())  # Field name made lowercase.
-    enddate = models.CharField(db_column='EndDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime())  # Field name made lowercase.
+    begindate = models.CharField(db_column='BeginDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime)  # Field name made lowercase.
+    enddate = models.CharField(db_column='EndDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime)  # Field name made lowercase.
     exammode = models.IntegerField(db_column='examMode', blank=True, null=True, choices=exam_mode_choice)  # Field name made lowercase.
     examisstate = models.IntegerField(db_column='examIsstate', blank=True, null=True, choices=exam_state_choice)  # Field name made lowercase.
     schoolrange = models.IntegerField(db_column='SchoolRange', blank=True, null=True, choices=school_range_choice)  # Field name made lowercase.
@@ -612,7 +612,7 @@ class TExaminfo(models.Model):
                                   choices=set([(user.platformnumber, user.platformnumber) for user in
                                                TFrontenduser.objects.all()])
                                   )  # Field name made lowercase.
-    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime())  # Field name made lowercase.
+    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime)  # Field name made lowercase.
     subjectids = models.CharField(db_column='SubjectIds', max_length=255, blank=True, null=True, choices=subject_ids)  # Field name made lowercase.
     faculty = models.CharField(db_column='Faculty', max_length=100, blank=True, null=True)  # Field name made lowercase.
     gradename = models.CharField(db_column='GradeName', max_length=255, blank=True, null=True, choices=grade_names)  # Field name made lowercase.
@@ -683,8 +683,8 @@ class TExamsubject(models.Model):
     subjectname = models.CharField(db_column='SubjectName', max_length=50, blank=True, null=True)  # Field name made lowercase.
     #subjectid = models.IntegerField(db_column='SubjectId', blank=True, null=True)  # Field name made lowercase.
     subjectid = models.ForeignKey(TGradesubjects, db_column='SubjectId', related_name='entries')
-    begindate = models.CharField(db_column='BeginDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime())  # Field name made lowercase.
-    enddate = models.CharField(db_column='EndDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime())  # Field name made lowercase.
+    begindate = models.CharField(db_column='BeginDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime)  # Field name made lowercase.
+    enddate = models.CharField(db_column='EndDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime)  # Field name made lowercase.
     testpapername = models.CharField(db_column='TestPaperName', max_length=200, blank=True, null=True)  # Field name made lowercase.
     #testpaperid = models.IntegerField(db_column='TestPaperId', blank=True, null=True)  # Field name made lowercase.
     testpaperid = models.ForeignKey(TUserpaperattribute, db_column='TestPaperId')
@@ -696,7 +696,7 @@ class TExamsubject(models.Model):
     createuser = models.CharField(db_column='CreateUser', max_length=100, blank=True, null=True,
                                   choices=set([(user.platformnumber, user.platformnumber) for user in
                                                TFrontenduser.objects.all()]))  # Field name made lowercase.
-    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime())  # Field name made lowercase.
+    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -747,12 +747,31 @@ class TExamcard(models.Model):
     cardhtml = models.TextField(db_column='CardHtml', blank=True, null=True)  # Field name made lowercase.
     createuser = models.CharField(db_column='CreateUser', max_length=100, blank=True, null=True,
                                   choices=set([(user.platformnumber, user.platformnumber) for user in TFrontenduser.objects.all()]))  # Field name made lowercase.
-    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime())  # Field name made lowercase.
+    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime)  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 't_examcard'
         verbose_name_plural = '答题卡'
+
+class TExamrange(models.Model):
+    rangetype_choices = (
+        (4, '年级'),
+        (8, '班级')
+    )
+
+    #examid = models.IntegerField(db_column='ExamId', blank=True, null=True)  # Field name made lowercase.
+    examid = models.ForeignKey(TExaminfo, db_column='ExamId')
+    name = models.CharField(db_column='Name', max_length=100, blank=True, null=True)  # Field name made lowercase.
+    nameid = models.IntegerField(db_column='NameId', blank=True, null=True)  # Field name made lowercase.
+    rangetype = models.IntegerField(db_column='RangeType', blank=True, null=True, choices=rangetype_choices)  # Field name made lowercase.
+    createuser = models.CharField(db_column='CreateUser', max_length=255, blank=True, null=True, choices=front_end_users)  # Field name made lowercase.
+    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 't_examrange'
+        verbose_name_plural = '参加考试的年级或班级'
 
 class TFavorites(models.Model):
     id = models.AutoField(db_column='Id', primary_key=True)  # Field name made lowercase.
@@ -1217,7 +1236,7 @@ class TUsertest(models.Model):
     #testid = models.IntegerField(db_column='TestId', blank=True, null=True)  # Field name made lowercase.
     testid = models.ForeignKey(TTestquestions, db_column='TestId')
     titletype = models.CharField(db_column='TitleType', max_length=50, blank=True, null=True)  # Field name made lowercase.
-    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime())  # Field name made lowercase.
+    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime)  # Field name made lowercase.
     createuser = models.CharField(db_column='CreateUser', max_length=50, blank=True, null=True, choices=front_end_users)  # Field name made lowercase.
     testversionid = models.IntegerField(db_column='TestVersionId', default=0, choices=testversionid_choices)  # Field name made lowercase.
 
@@ -1242,7 +1261,7 @@ class TUserscore(models.Model):
     schoolid = models.IntegerField(db_column='SchoolId', blank=True, null=True, choices=school_ids)  # Field name made lowercase.
     titletype = models.CharField(db_column='TitleType', max_length=50, blank=True, null=True, choices=titletype_choices)  # Field name made lowercase.
     scorejson = models.TextField(db_column='ScoreJson', blank=True, null=True, default=scorejson_template)  # Field name made lowercase.
-    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime())  # Field name made lowercase.
+    createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime)  # Field name made lowercase.
     createuser = models.CharField(db_column='CreateUser', max_length=50, blank=True, null=True, choices=front_end_users)  # Field name made lowercase.
     sort = models.IntegerField(db_column='Sort', blank=True, null=True)  # Field name made lowercase.
     isequal = models.IntegerField(db_column='IsEqual', blank=True, null=True, default=1, choices=isequal_choices)  # Field name made lowercase.

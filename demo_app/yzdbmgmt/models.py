@@ -297,21 +297,41 @@ school_ids = set([(school.id, school.schoolname) for school in TSchool.objects.a
 school_names = set([(school.schoolname, school.schoolname) for school in TSchool.objects.all()])
 
 class TTeacher(models.Model):
+    genders = (
+        (0, '男'),
+        (1, '女')
+    )
+
+    validators = {
+        (0, '未启用'),
+        (1, '启用')
+    }
+
+    working_choices = (
+        (0, '在职'),
+        (1, '离职')
+    )
+
+    nature_choices = {
+        (0, '全职'),
+        (1, '兼职')
+    }
+
     id = models.AutoField(db_column='Id', primary_key=True)  # Field name made lowercase.
-    schoolid = models.IntegerField(db_column='SchoolId', choices=school_ids)  # Field name made lowercase.
-    subjectid = models.IntegerField(db_column='SubjectId', blank=True, null=True, choices=subject_ids)  # Field name made lowercase.
+    schoolid = models.IntegerField(db_column='SchoolId', choices=school_ids, default=76)  # Field name made lowercase.
+    subjectid = models.IntegerField(db_column='SubjectId', blank=True, null=True, choices=subject_ids, default=25)  # Field name made lowercase.
     platformid = models.CharField(db_column='PlatformId', max_length=100, blank=True, null=True)  # Field name made lowercase.
-    user_name = models.CharField(db_column='User_Name', max_length=100, blank=True, null=True)  # Field name made lowercase.
-    sex = models.IntegerField(db_column='Sex', blank=True, null=True)  # Field name made lowercase.
-    age = models.IntegerField(db_column='Age', blank=True, null=True)  # Field name made lowercase.
-    teachernumber = models.CharField(db_column='TeacherNumber', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    phone = models.CharField(db_column='Phone', max_length=11, blank=True, null=True)  # Field name made lowercase.
-    idcard = models.CharField(db_column='IdCard', max_length=18)  # Field name made lowercase.
-    nature = models.IntegerField(db_column='Nature', blank=True, null=True)  # Field name made lowercase.
-    working = models.IntegerField(db_column='Working', blank=True, null=True)  # Field name made lowercase.
-    isstate = models.IntegerField(db_column='Isstate', blank=True, null=True)  # Field name made lowercase.
+    user_name = models.CharField(db_column='User_Name', max_length=100, blank=True, null=True, default=get_random_name)  # Field name made lowercase.
+    sex = models.IntegerField(db_column='Sex', blank=True, null=True, choices=genders, default=0)  # Field name made lowercase.
+    age = models.IntegerField(db_column='Age', blank=True, null=True, default=28)  # Field name made lowercase.
+    teachernumber = models.CharField(db_column='TeacherNumber', max_length=255, blank=True, null=True, default=create_phone)  # Field name made lowercase.
+    phone = models.CharField(db_column='Phone', max_length=11, blank=True, null=True, default=create_phone)  # Field name made lowercase.
+    idcard = models.CharField(db_column='IdCard', max_length=18, default=gennerate_idcard)  # Field name made lowercase.
+    nature = models.IntegerField(db_column='Nature', blank=True, null=True, choices=nature_choices, default=0)  # Field name made lowercase.
+    working = models.IntegerField(db_column='Working', blank=True, null=True, choices=working_choices, default=0)  # Field name made lowercase.
+    isstate = models.IntegerField(db_column='Isstate', blank=True, null=True, choices=validators, default=1)  # Field name made lowercase.
     createdate = models.CharField(db_column='CreateDate', max_length=32, blank=True, null=True, default=getYzDefaultFmtDateTime)  # Field name made lowercase.
-    createuser = models.CharField(db_column='CreateUser', max_length=50, blank=True, null=True, choices=front_end_users)  # Field name made lowercase.
+    createuser = models.CharField(db_column='CreateUser', max_length=50, blank=True, null=True, choices=front_end_users, default='hz2hs@163.com')  # Field name made lowercase.
     updatedate = models.CharField(db_column='UpdateDate', max_length=32, blank=True, null=True)  # Field name made lowercase.
     updateuser = models.CharField(db_column='UpdateUser', max_length=50, blank=True, null=True)  # Field name made lowercase.
 
